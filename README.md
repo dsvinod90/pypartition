@@ -6,11 +6,20 @@ An API based (Flask) approach that provides a plug-and-play solution to partitio
 - Python (preferably v3.9)
 - PostgreSQL (preferably v16.0)
 
-## Sample Request-Response Cycle
-### Define Table for Range Partitioning
+## Run server:
+In order to run the server, create a `.env` file in the root directory of the project folder and provide the details for `POSTGRES_USER` and `POSTGRES_PASSWORD`. This file will not be committed to the repository as it has been added to `.gitignore`.
+
+Syntax to run the server (in debug mode): `flask --app flaskr run --debug`
+
+This syntax will serve the flask app by default on port 5000.
+
+*Note: Before running the flask server, please ensure that Postgres is running.*
+
+## Sample API Contract
+### Define partition table by range
 #### Request
 ```curl
-curl --location 'http://localhost:5000/api/define_table' \
+curl -i --location 'http://localhost:5000/api/define_table' \
 --header 'Content-Type: application/json' \
 --data '{
     "table_name": "measurement",
@@ -29,30 +38,10 @@ curl --location 'http://localhost:5000/api/define_table' \
     }
 }'
 ```
-#### Success Response
-`Status: 201 CREATED`
-```json
-{
-    "message": "success"
-}
-```
-#### Error Response (Validation Error for request body)
-`Status: 400 BAD REQUEST`
-```json
-{
-    "message": {
-        "partition_type": [
-            "Missing data for required field."
-        ]
-    },
-    "status": "error"
-}
-```
-
-### Create Range Partition
+### Create partitions by range
 #### Request
 ```curl
-curl --location 'http://localhost:5000/api/create_range_partition' \
+curl -i --location 'http://localhost:5000/api/create_range_partition' \
 --header 'Content-Type: application/json' \
 --data '{
     "table_name": "measurement_y2006m03",
@@ -67,23 +56,36 @@ curl --location 'http://localhost:5000/api/create_range_partition' \
     }
 }'
 ```
+### Sample responses
 #### Success Response
-`Status: 201 CREATED`
-```json
+```
+HTTP/1.1 201 CREATED
+Server: Werkzeug/3.0.1 Python/3.9.6
+Date: Fri, 03 Nov 2023 22:55:07 GMT
+Content-Type: application/json
+Content-Length: 27
+Connection: close
+
 {
-    "message": "success"
+  "message": "success"
 }
 ```
-#### Error Response (Validation Error for request body)
-`Status: 400 BAD REQUEST`
-```json
+#### Error Response (Validation Error)
+```
+HTTP/1.1 400 BAD REQUEST
+Server: Werkzeug/3.0.1 Python/3.9.6
+Date: Fri, 03 Nov 2023 22:56:10 GMT
+Content-Type: application/json
+Content-Length: 115
+Connection: close
+
 {
-    "message": {
-        "to_value": [
-            "Missing data for required field."
-        ]
-    },
-    "status": "error"
+  "message": {
+    "partition_type": [
+      "Missing data for required field."
+    ]
+  },
+  "status": "error"
 }
 ```
 
