@@ -11,6 +11,6 @@ class HashPartitionSchema(Schema):
         unknown = EXCLUDE
     table_name = fields.String(required=True)
     parent_table_name = fields.String(required=True)
-    partition_column = fields.String(required=True)
-    num_partitions = fields.Integer(required=True)
+    modulus = fields.Integer(required=True)
+    remainder = fields.Integer(required=True)
     db_connection = fields.Nested(ConnectionSchema(), required=True)

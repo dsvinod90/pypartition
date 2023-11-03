@@ -22,16 +22,16 @@ class PartitionByHash:
         self.connection.commit()
         return True
 
-    def create_partition_tables(self, table_name: str, parent_table_name: str, partition_column: str, num_partitions: int):
+    def create_partition_tables(self, table_name: str, parent_table_name: str, modulus: int, remainder: int):
         """
         Create partition tables from a parent table.
         :param table_name: Name of the partition
         :param parent_table_name: Name of the table of which this table is a partition
-        :param partition_column: Column name to partition over
-        :param num_partitions: Number of partitions to create
+        :param modulus:
+        :param remainder:
         :return: None
         """
-        query = query_builder.create_hash_partitions(table_name, parent_table_name, partition_column, num_partitions)
+        query = query_builder.create_hash_partitions(table_name, parent_table_name, modulus, remainder)
         print(query)
         self.cursor.execute(query)
         self.connection.commit()

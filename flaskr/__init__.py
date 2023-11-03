@@ -94,7 +94,7 @@ def create_hash_partition():
     partition = PartitionByHash(connection)
     if partition.create_partition_tables(request_data['table_name'],
                                          request_data['parent_table_name'],
-                                         request_data['partition_column'],
-                                         request_data['num_partitions']):
+                                         request_data['modulus'],
+                                         request_data['remainder']):
         return jsonify({"message": Constants.SUCCESS_MESSAGE.value}), Constants.CREATED.value
     return jsonify({"message": Constants.ERROR_MESSAGE.value}), Constants.INTERNAL_SERVER_ERROR.value
