@@ -8,7 +8,9 @@ from marshmallow import ValidationError
 from flaskr.connector import Connector
 from flaskr.constants import Constants
 from flaskr.declarative_partitioning.partition_by_range import PartitionByRange
+from flaskr.declarative_partitioning.partition_by_hash import PartitionByHash
 from flaskr.models.range_partition_schema import RangePartitionSchema
+from flaskr.models.hash_partition_schema import HashPartitionSchema
 from flaskr.models.table_schema import TableSchema
 
 app = Flask(__name__)
@@ -61,6 +63,8 @@ def define_table():
     connection = establish_connection(request_data['db_connection'])
     if request_data['partition_type'] == Constants.PARTITION_TYPE_RANGE.value:
         partition = PartitionByRange(connection)
+    elif request_data['partition_type'] == Constants.PARTITION_TYPE_HASH.value:
+        partition = PartitionByRange(connection)
     if partition and partition.define_table(request_data['table_name'],
                                             request_data['partition_column'],
                                             request_data['attributes']):
@@ -79,5 +83,18 @@ def create_partition():
                                          request_data['parent_table_name'],
                                          request_data['from_value'],
                                          request_data['to_value']):
+        return jsonify({"message": Constants.SUCCESS_MESSAGE.value}), Constants.CREATED.value
+    return jsonify({"message": Constants.ERROR_MESSAGE.value}), Constants.INTERNAL_SERVER_ERROR.value
+
+@app.route('/api/create_range_partition', methods=['POST'])
+@required_params(HashPartitionSchema())
+def create_hash_partition():
+    request_data = json.loads(request.data)
+    connection = establish_connection(request_data['db_connection'])
+    partition = PartitionByHash(connection)
+    if partition.create_partition_tables(request_data['table_name'],
+                                         request_data['parent_table_name'],
+                                         request_data['partition_column'],
+                                         request_data['num_partitions']):
         return jsonify({"message": Constants.SUCCESS_MESSAGE.value}), Constants.CREATED.value
     return jsonify({"message": Constants.ERROR_MESSAGE.value}), Constants.INTERNAL_SERVER_ERROR.value
