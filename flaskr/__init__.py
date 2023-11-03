@@ -86,7 +86,7 @@ def create_partition():
         return jsonify({"message": Constants.SUCCESS_MESSAGE.value}), Constants.CREATED.value
     return jsonify({"message": Constants.ERROR_MESSAGE.value}), Constants.INTERNAL_SERVER_ERROR.value
 
-@app.route('/api/create_range_partition', methods=['POST'])
+@app.route('/api/create_hash_partition', methods=['POST'])
 @required_params(HashPartitionSchema())
 def create_hash_partition():
     request_data = json.loads(request.data)
