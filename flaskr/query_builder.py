@@ -31,3 +31,37 @@ def create_range_partitions(table_name: str, parent_table_name: str, from_value:
     """
     return (f"CREATE TABLE IF NOT EXISTS {table_name} PARTITION OF {parent_table_name} "
             f"FOR VALUES FROM ('{from_value}') TO ('{to_value}')")
+
+
+def define_table_partitioning_by_hash(table_name: str, partition_column: str, attributes: Dict):
+    """
+    Build query to define a table for hash based partitioning.
+    :param table_name: Name of the table
+    :param partition_column: Column on which the partitioning is applied
+    :param attributes: Attributes of the table
+    :return: Query string
+    """
+    table_attributes = ''
+    attribute_count = 0
+    for attribute, data_type in attributes.items():
+        attribute_count += 1
+        if attribute_count < len(attributes):
+            table_attributes += str(attribute) + ' ' + str(data_type) + ', '
+        else:
+            table_attributes += str(attribute) + ' ' + str(data_type)
+    return f"CREATE TABLE IF NOT EXISTS {table_name}({table_attributes}) PARTITION BY HASH ({partition_column});"
+
+
+def create_hash_partitions(table_name: str, parent_table_name: str, modulus: int, remainder: int):
+    """
+    The table is partitioned by specifying a modulus and a remainder for each partition. Each partition will hold the
+    rows for which the hash value of the partition key divided by the specified modulus will produce the specified
+    remainder.
+    :param table_name: Name of the partition
+    :param parent_table_name: Name of the table of which this table is a partition
+    :param modulus:
+    :param remainder:
+    :return: Query string
+    """
+    return (f"CREATE TABLE IF NOT EXISTS {table_name} PARTITION OF {parent_table_name} "
+            f"FOR VALUES WITH (modulus {modulus}, remainder {remainder})")
