@@ -2,6 +2,10 @@
 
 An API based (Flask) approach that provides a plug-and-play solution to partition postgres database.
 
+## System Architecture
+![pyPartition System Architecture-2](https://github.com/dsvinod90/pypartition/assets/26185142/390d9d66-1fd7-4cbc-9f23-68038fe60879)
+
+
 ## Pre-requisites:
 - Python (preferably v3.9)
 - PostgreSQL (preferably v16.0)
